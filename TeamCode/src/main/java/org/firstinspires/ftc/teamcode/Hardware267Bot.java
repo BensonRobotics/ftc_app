@@ -31,19 +31,21 @@ public class Hardware267Bot
     // Hardware:
     public DcMotor  leftMotor   = null;
     public DcMotor  rightMotor  = null;
-    /*
+
+    public DcMotor  leftBelt    = null;
+    public DcMotor  rightBelt   = null;
+    public Servo    ballFlicker  = null;
+    ///public sensor    colorsensor = null;
+
     public ColorSensor color = null;
-    public DcMotor armMotor = null;
-    public Servo hopperServo = null;
     public OpticalDistanceSensor lineveiwer = null;
-    public Servo buttonPusher = null;
     public DcMotor belt = null;
 
     // Other state:
     public boolean servosEnabled;
     public boolean gateOpen;
     public ButtonPusherState buttonPusherState;
-    */
+
     // Constants:
     public static final double HOPPER_OPEN = 0; //TODO: Find value
     public static final double HOPPER_CLOSED = 1; //TODO: Find value
@@ -70,10 +72,10 @@ public class Hardware267Bot
         //lineviewer = hwMap.opticalDistanceSensor.get("lightveiwer");
         leftMotor   = hwMap.dcMotor.get("leftMotor");
         rightMotor  = hwMap.dcMotor.get("rightMotor");
-        //color = hwMap.colorSensor.get("color");
+        color = hwMap.colorSensor.get("color");
         //color.enableLed(false);
         //armMotor = hwMap.dcMotor.get("arm");
-        //hopperServo = hwMap.servo.get("hopper");
+        ballFlicker = hwMap.servo.get("ballFlicker");
         //hopperServo.setPosition(0);
         //hopperServo.setPosition(hopperServo.getPosition());
         //buttonPusher = hwMap.servo.get("pusher");
