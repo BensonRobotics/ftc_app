@@ -63,6 +63,10 @@ public class team267botTeleop_Linear extends LinearOpMode {
         double right;
         double leftBeltPower;
         double rightBeltPower;
+        double leftFeederPower;
+        double rightFeederPower;
+
+
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -70,7 +74,7 @@ public class team267botTeleop_Linear extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
+        telemetry.addData("Say", "AHGGHGGGHHGH");    //
         telemetry.update();
 
 
@@ -83,6 +87,8 @@ public class team267botTeleop_Linear extends LinearOpMode {
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
             left = -gamepad1.left_stick_y;
             right = -gamepad1.right_stick_y;
+           // left = Range.clip(left, -.5, .5);
+          //  right= Range.clip(right, -.5, .5);
 
             // Output the safe vales to the motor drives.
             robot.leftMotor.setPower(left);
@@ -92,19 +98,38 @@ public class team267botTeleop_Linear extends LinearOpMode {
                 //If the left trigger is pressed, move block forward.
 
                 //normalize to between 0 and 1
+
+                //Belts
                 leftBeltPower=  gamepad1.left_trigger;
                 rightBeltPower= gamepad1.left_trigger;
+
+                //Feeders
+
+                leftFeederPower= gamepad1.left_trigger;
+                rightFeederPower= gamepad1.right_trigger;
 
             }
             else if (gamepad1.right_trigger >0) {
                 //If the right trigger is pressed, move block backwards.
+
+                //belts
                 leftBeltPower= -gamepad1.right_trigger;
                 rightBeltPower= -gamepad1.right_trigger;
+
+                //feeder
+                leftFeederPower= -gamepad1.left_trigger;
+                rightFeederPower= -gamepad1.right_trigger;
             }
             else {
                 //If neither triggers are pressed, do nothing.
+
+                //belts
                 leftBeltPower= 0;
                 rightBeltPower= 0;
+
+                //feeder
+                leftFeederPower= 0;
+                rightFeederPower= 0;
             }
             robot.leftBelt.setPower(leftBeltPower);
             robot.rightBelt.setPower(rightBeltPower);

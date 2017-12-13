@@ -33,6 +33,8 @@ public class Hardware267Bot
     public DcMotor  rightMotor  = null;
     public DcMotor  leftBelt    = null;
     public DcMotor  rightBelt   = null;
+    public DcMotor leftFeeder  = null;
+    public DcMotor rightFeeder = null;
     /*
     public ColorSensor color = null;
     public DcMotor armMotor = null;
