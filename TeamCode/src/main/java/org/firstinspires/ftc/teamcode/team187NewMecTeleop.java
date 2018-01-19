@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
-import java.lang.Math;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+@TeleOp(name="MecBot:servo test ", group="MecBot")
 
-@TeleOp(name="MecBot: Teleop Mec 2.9", group="MecBot")
-
-public class team187MecTeleop extends OpMode{
+public class team187NewMecTeleop extends OpMode{
 
     /* Declare OpMode members. */
-    Hardware187bot robot       = new Hardware187bot(); // use the class created to define a Pushbot's hardware
+    Hardware187NewBot robot       = new Hardware187NewBot(); // use the class created to define a Pushbot's hardware
                                                          // could also use HardwarePushbotMatrix class.
 
     /*
@@ -41,8 +36,11 @@ public class team187MecTeleop extends OpMode{
      * Code to run ONCE when the driver hits PLAY
      */
 
-    public double gripPos  = robot.MID_SERVO ;
+    public double griprightPos  = robot.RIGHT_SERVO_OPEN ;
+    public double gripleftPos  = robot.LEFT_SERVO_OPEN ;
+
     @Override
+
     public void start() {
 
     }
@@ -61,10 +59,14 @@ public class team187MecTeleop extends OpMode{
 
         double fl,fr,bl,br;
 
-        final double    GRIP_SPEED  = 0.5;
+
 
         final double ARM_UP_POWER    =  0.45 ;
         final double ARM_DOWN_POWER  = -0.45 ;
+
+
+
+
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
 
@@ -95,14 +97,17 @@ public class team187MecTeleop extends OpMode{
         robot.backLeft.setPower(bl);
         robot.backRight.setPower(br);
 
-        if (gamepad1.x)
-            robot.gripLow.setPosition(0);
-        else if (gamepad1.b) {
-            robot.gripLow.setPosition(180);
+        if (gamepad1.x) {
+            robot.gripright.setPosition(robot.RIGHT_SERVO_OPEN);
+            robot.gripleft.setPosition(robot.LEFT_SERVO_OPEN);
         }
 
-//        gripPos = Range.clip(gripPos, 0, 1);
-//        robot.gripLow.setPosition(gripPos);
+        else if (gamepad1.b)
+        {
+            robot.gripright.setPosition(robot.RIGHT_SERVO_CLOSED);
+            robot.gripleft.setPosition(robot.LEFT_SERVO_CLOSED);
+        }
+
 
         if (gamepad1.y)
             robot.liftLow.setPower(ARM_UP_POWER);
