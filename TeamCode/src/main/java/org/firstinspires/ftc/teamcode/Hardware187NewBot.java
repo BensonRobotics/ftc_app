@@ -66,11 +66,11 @@ public class Hardware187NewBot
     public DcMotor liftLow = null;
     public Servo gripleft = null;
     public Servo gripright = null;
-    public static final double RIGHT_SERVO_OPEN      =  0.6 ;
-    public static final double RIGHT_SERVO_CLOSED     =  0.0 ;
+    public static final float RIGHT_SERVO_OPEN      =  0.6F ;
+    public static final float RIGHT_SERVO_CLOSED     =  0.0F ;
 
-    public static final double LEFT_SERVO_OPEN      =  0.4 ;
-    public static final double LEFT_SERVO_CLOSED     =  1.0 ;
+    public static final float LEFT_SERVO_OPEN      =  0.4F ;
+    public static final float LEFT_SERVO_CLOSED     =  1.0F ;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -119,6 +119,13 @@ public class Hardware187NewBot
 
 
 
+    }
+
+    public float ScaleRightServoValue (float input) {
+        return (RIGHT_SERVO_OPEN - RIGHT_SERVO_CLOSED) * input + RIGHT_SERVO_CLOSED;
+    }
+    public float ScaleLeftServoValue (float input) {
+        return (LEFT_SERVO_OPEN - LEFT_SERVO_CLOSED) * input + LEFT_SERVO_CLOSED;
     }
  }
 
