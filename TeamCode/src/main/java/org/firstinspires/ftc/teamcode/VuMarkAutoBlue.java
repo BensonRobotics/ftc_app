@@ -66,7 +66,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Concept: VuMark Blue", group ="Concept")
+@Autonomous(name="Concept: VuMark Red", group ="Concept")
 
 public class VuMarkAutoBlue extends LinearOpMode {
 
@@ -194,7 +194,7 @@ public class VuMarkAutoBlue extends LinearOpMode {
     }
 
     void drive(double time) {
-        Hardware187bot         robot   = new Hardware187bot();   // Use a Pushbot's hardware
+        Hardware187NewBot         robot   = new Hardware187NewBot();   // Use a Pushbot's hardware
          ElapsedTime runtime = new ElapsedTime();
 
 
@@ -206,6 +206,17 @@ public class VuMarkAutoBlue extends LinearOpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
+
+        robot.gripright.setPosition(robot.RIGHT_SERVO_CLOSED);
+        robot.gripleft.setPosition(robot.LEFT_SERVO_CLOSED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+            telemetry.addData("left servo",  "%.2f", robot.gripleft.getPosition());
+            telemetry.addData("right servo",  "%.2f", robot.gripright.getPosition());
+            telemetry.update();
+        }
+
+        sleep(500);
 
         robot.frontLeft.setPower(FORWARD_SPEED);
         robot.frontRight.setPower(-FORWARD_SPEED);
@@ -224,46 +235,49 @@ public class VuMarkAutoBlue extends LinearOpMode {
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//        robot.frontLeft.setPower(FORWARD_SPEED);
-//        robot.frontRight.setPower(FORWARD_SPEED);
-//        robot.backLeft.setPower(FORWARD_SPEED);
-//        robot.backRight.setPower(FORWARD_SPEED);
-//        runtime.reset();
-//        while (opModeIsActive() && (runtime.seconds() < 1)) {
-//            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-//            telemetry.update();
-//        }
-//
-//        robot.frontLeft.setPower(0);
-//        robot.frontRight.setPower(0);
-//        robot.backLeft.setPower(0);
-//        robot.backRight.setPower(0);
-//
-//        // Step 1:  Open grippers
-//        robot.gripright.setPosition(robot.RIGHT_SERVO_OPEN);
-//        robot.gripleft.setPosition(robot.LEFT_SERVO_OPEN);
-//        runtime.reset();
-//        while (opModeIsActive() && (runtime.seconds() < 5.0)) {
-//            telemetry.addData("left servo",  "%.2f", robot.gripleft.getPosition());
-//            telemetry.addData("right servo",  "%.2f", robot.gripright.getPosition());
-//            telemetry.update();
-//        }
-//
-//
-//        robot.frontLeft.setPower(-FORWARD_SPEED);
-//        robot.frontRight.setPower(-FORWARD_SPEED);
-//        robot.backLeft.setPower(-FORWARD_SPEED);
-//        robot.backRight.setPower(-FORWARD_SPEED);
-//        runtime.reset();
-//        while (opModeIsActive() && (runtime.seconds() < 1)) {
-//            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-//            telemetry.update();
-//        }
-//
-//        robot.frontLeft.setPower(0);
-//        robot.frontRight.setPower(0);
-//        robot.backLeft.setPower(0);
-//        robot.backRight.setPower(0);
+        robot.frontLeft.setPower(FORWARD_SPEED);
+        robot.frontRight.setPower(FORWARD_SPEED);
+        robot.backLeft.setPower(FORWARD_SPEED);
+        robot.backRight.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        sleep(500);
+
+        // Step 1:  Open grippers
+        robot.gripright.setPosition(robot.RIGHT_SERVO_OPEN);
+        robot.gripleft.setPosition(robot.LEFT_SERVO_OPEN);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+            telemetry.addData("left servo",  "%.2f", robot.gripleft.getPosition());
+            telemetry.addData("right servo",  "%.2f", robot.gripright.getPosition());
+            telemetry.update();
+        }
+
+        sleep(500);
+
+        robot.frontLeft.setPower(-FORWARD_SPEED);
+        robot.frontRight.setPower(-FORWARD_SPEED);
+        robot.backLeft.setPower(-FORWARD_SPEED);
+        robot.backRight.setPower(-FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

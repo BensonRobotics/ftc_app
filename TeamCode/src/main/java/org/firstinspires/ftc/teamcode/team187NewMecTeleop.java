@@ -98,8 +98,10 @@ public class team187NewMecTeleop extends OpMode{
         robot.backRight.setPower(br);
 
 
-        robot.gripright.setPosition(robot.ScaleRightServoValue(gamepad1.right_trigger));
-        robot.gripleft.setPosition(robot.ScaleLeftServoValue(gamepad1.right_trigger));
+        if(gamepad1.right_bumper != true) {
+            robot.gripright.setPosition(robot.ScaleRightServoValue(gamepad1.right_trigger));
+            robot.gripleft.setPosition(robot.ScaleLeftServoValue(gamepad1.right_trigger));
+        }
 
 
 
