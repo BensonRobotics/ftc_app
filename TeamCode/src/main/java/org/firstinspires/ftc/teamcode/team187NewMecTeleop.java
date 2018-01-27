@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="MecBot:servo test ", group="MecBot")
+@TeleOp(name="MecBot:servo test 3.6", group="MecBot")
 
 public class team187NewMecTeleop extends OpMode{
 
@@ -97,16 +97,12 @@ public class team187NewMecTeleop extends OpMode{
         robot.backLeft.setPower(bl);
         robot.backRight.setPower(br);
 
-        if (gamepad1.x) {
-            robot.gripright.setPosition(robot.RIGHT_SERVO_OPEN);
-            robot.gripleft.setPosition(robot.LEFT_SERVO_OPEN);
-        }
 
-        else if (gamepad1.b)
-        {
-            robot.gripright.setPosition(robot.RIGHT_SERVO_CLOSED);
-            robot.gripleft.setPosition(robot.LEFT_SERVO_CLOSED);
-        }
+        robot.gripright.setPosition(robot.ScaleRightServoValue(gamepad1.right_trigger));
+        robot.gripleft.setPosition(robot.ScaleLeftServoValue(gamepad1.right_trigger));
+
+
+
 
 
         if (gamepad1.y)
