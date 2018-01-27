@@ -224,29 +224,46 @@ public class ConceptVuMarkIdentificationOpposite extends LinearOpMode {
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        robot.liftLow.setPower(-FORWARD_SPEED);
+        robot.frontLeft.setPower(FORWARD_SPEED);
+        robot.frontRight.setPower(FORWARD_SPEED);
+        robot.backLeft.setPower(FORWARD_SPEED);
+        robot.backRight.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        robot.liftLow.setPower(0);
 
-        sleep(1000 );
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
 
-        robot.gripLow.setPosition(0);
-
-        sleep(1000);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        robot.liftLow.setPower(FORWARD_SPEED);
+        // Step 1:  Open grippers
+        robot.gripright.setPosition(robot.RIGHT_SERVO_OPEN);
+        robot.gripleft.setPosition(robot.LEFT_SERVO_OPEN);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+        while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+            telemetry.addData("left servo",  "%.2f", robot.gripleft.getPosition());
+            telemetry.addData("right servo",  "%.2f", robot.gripright.getPosition());
+            telemetry.update();
+        }
+
+
+        robot.frontLeft.setPower(-FORWARD_SPEED);
+        robot.frontRight.setPower(-FORWARD_SPEED);
+        robot.backLeft.setPower(-FORWARD_SPEED);
+        robot.backRight.setPower(-FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        robot.liftLow.setPower(0);
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
