@@ -26,12 +26,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -65,9 +66,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Concept: VuMark Id", group ="Concept")
-@Disabled
-public class ConceptVuMarkIdentification extends LinearOpMode {
+@Autonomous(name="Concept: VuMark Blue", group ="Concept")
+
+public class ConceptVuMarkIdentificationOpposite extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
 
@@ -145,6 +146,18 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
                  * on which VuMark was visible. */
                 telemetry.addData("VuMark", "%s visible", vuMark);
 
+                if(vuMark == RelicRecoveryVuMark.LEFT) {
+                    drive(2.7);
+                }
+
+                if(vuMark == RelicRecoveryVuMark.CENTER) {
+                    drive(3.5);
+                }
+
+                if(vuMark == RelicRecoveryVuMark.RIGHT) {
+                    drive(4.5);
+                }
+
                 /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
                  * it is perhaps unlikely that you will actually need to act on this pose information, but
                  * we illustrate it nevertheless, for completeness. */
@@ -179,4 +192,69 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
+
+    void drive(double time) {
+        Hardware187bot         robot   = new Hardware187bot();   // Use a Pushbot's hardware
+         ElapsedTime runtime = new ElapsedTime();
+
+
+         final double     FORWARD_SPEED = 0.6;
+         final double     TURN_SPEED    = 0.5;
+
+        robot.init(hardwareMap);
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Ready to run");    //
+        telemetry.update();
+
+        robot.frontLeft.setPower(FORWARD_SPEED);
+        robot.frontRight.setPower(-FORWARD_SPEED);
+        robot.backLeft.setPower(-FORWARD_SPEED);
+        robot.backRight.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < time)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        robot.liftLow.setPower(-FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        robot.liftLow.setPower(0);
+
+        sleep(1000 );
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        robot.gripLow.setPosition(0);
+
+        sleep(1000);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        robot.liftLow.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        robot.liftLow.setPower(0);
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        sleep(1000);
+        stop();
+    }
+
+
 }
