@@ -90,6 +90,7 @@ public class Hardware267Bot
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.FORWARD);
         belts.setDirection(DcMotor.Direction.REVERSE);
+        spinnerMotor.setDirection(DcMotor.Direction.REVERSE);
         //rightBelt.setDirection(DcMotor.Direction.FORWARD);
         //belt = hwMap.dcMotor.get("belt");
 
