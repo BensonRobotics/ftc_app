@@ -59,9 +59,6 @@ public class team267botTeleop_Linear extends LinearOpMode {
     public void runOpMode() {
         double left;
         double right;
-        double beltPower;
-        double rampStatus = robot.RAMP_CLOSED;
-
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -87,47 +84,12 @@ public class team267botTeleop_Linear extends LinearOpMode {
             robot.leftMotor.setPower(left);
             robot.rightMotor.setPower(right);
 
-            if (gamepad1.left_trigger >0) {
-                //If the left trigger is pressed, move block forward.
-
-                //normalize to between 0 and 1
-                beltPower=  gamepad1.left_trigger;
-
-            }
-            else if (gamepad1.right_trigger >0) {
-                //If the right trigger is pressed, move block backwards.
-                beltPower= -gamepad1.right_trigger;
-            }
-            else {
-                //If neither triggers are pressed, do nothing.
-                beltPower= 0;
-            }
-
-
-
-
-
-            if (gamepad1.x) {
-                rampStatus = robot.RAMP_OPEN;
-            }
-            else if (gamepad1.b) {
-                rampStatus = robot.RAMP_CLOSED;
-            }
-
-            robot.beltOpener.setPosition(rampStatus);
-            robot.belts.setPower(beltPower);
-            robot.spinnerMotor.setPower(beltPower);
-            //robot.rightBelt.setPower(rightBeltPower);
-
-
             // Send telemetry message to signify robot running;
 
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
-            telemetry.addData("belts", "%.2f", beltPower);
             telemetry.addData("leftTrigger", "%.2f", gamepad1.left_trigger);
             telemetry.addData("rightTrigger","%.2f", gamepad1.right_trigger);
-            telemetry.addData("beltOpener","%.2f", rampStatus);
 
             telemetry.update();
 
