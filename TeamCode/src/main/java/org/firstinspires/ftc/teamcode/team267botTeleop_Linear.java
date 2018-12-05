@@ -52,13 +52,15 @@ public class team267botTeleop_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     Hardware267Bot robot           = new Hardware267Bot();   // Use a Pushbot's hardware
-    public static final double TRIGGER_MIN = 0; //TODO: Find value
-    public static final double TRIGGER_MAX = 1; //TODO: Find value                                                 // could also use HardwarePushbotMatrix class.
+    public static final double TRIGGER_MIN = 0;
+    public static final double TRIGGER_MAX = 1;
 
     @Override
     public void runOpMode() {
         double left;
         double right;
+        double lift;
+        double speedFactor = 1;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -76,21 +78,42 @@ public class team267botTeleop_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            if (gamepad1.x){
+                speedFactor = (speedFactor == 1? 0.6 : 1);
+            }
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
+            left = -(gamepad1.left_stick_y * speedFactor);
+            right = -(gamepad1.right_stick_y * speedFactor);
+
+            if (gamepad1.y) {
+                lift = 0.7;
+            }
+            else if (gamepad1.a) {
+                lift = -0.7;
+            }
+            else {
+                lift = 0;
+            }
+
 
             // Output the safe vales to the motor drives.
             robot.leftMotor.setPower(left);
             robot.rightMotor.setPower(right);
-
+            robot.liftMotor.setPower(lift);
             // Send telemetry message to signify robot running;
 
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.addData("leftTrigger", "%.2f", gamepad1.left_trigger);
             telemetry.addData("rightTrigger","%.2f", gamepad1.right_trigger);
+            telemetry.addData("left stick", "%.2f", gamepad1.left_stick_y);
+            telemetry.addData("right stick","%.2f", gamepad1.right_stick_y);
+            telemetry.addData("speedFactor","%.2f", speedFactor);
 
+
+            telemetry.addData("encoder-fwd-end", robot.liftMotor.getCurrentPosition() + "  busy=" + robot.liftMotor.isBusy());
+            telemetry.update();
+            idle();
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.

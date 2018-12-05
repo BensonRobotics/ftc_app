@@ -27,18 +27,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 /**
  * Created by FTC_Team_0267 on 10/30/2018.
  * By: Jillian Hogan
  */
-@Autonomous(name = "lazy forwards",group = "Pushbot")
-public class depot_autonomous extends LinearOpMode {
+
+//Setup
+
+@Autonomous(name = "Pick this one guys, or don't, whatever",group = "Pushbot")
+public class depot_autonomous_2_electric_boogaloo extends LinearOpMode {
     private String startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());;
     private ElapsedTime runtime = new ElapsedTime();
     Hardware267Bot robot = new Hardware267Bot();
@@ -57,6 +63,8 @@ public class depot_autonomous extends LinearOpMode {
         robot.armMotor.setPower(0);
         robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         */
+            //Lowering from the lander
+
             waitForStart();
             robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -66,8 +74,10 @@ public class depot_autonomous extends LinearOpMode {
 
             robot.liftMotor.setPower(0.6);
 
+            //Going away from lander
+
             sleep(10000);
-            //going away from lander
+
             robot.leftMotor.setPower(-0.5);
             robot.rightMotor.setPower(-0.5);
 

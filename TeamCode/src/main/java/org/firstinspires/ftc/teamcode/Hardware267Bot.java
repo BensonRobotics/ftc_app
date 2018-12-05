@@ -28,9 +28,10 @@ public class Hardware267Bot
     // Hardware:
     public DcMotor  leftMotor     = null;
     public DcMotor  rightMotor    = null;
-    public DcMotor  belts         = null;
-    public DcMotor  spinnerMotor  = null;
-    public Servo    beltOpener    = null;
+    public DcMotor  liftMotor  = null;
+   // public DcMotor  belts         = null;
+    //public DcMotor  spinnerMotor  = null;
+   // public Servo    beltOpener    = null;
     /*
     public ColorSensor color = null;
     public DcMotor armMotor = null;
@@ -45,13 +46,13 @@ public class Hardware267Bot
     public ButtonPusherState buttonPusherState;
     */
     // Constants:
-    public static final double HOPPER_OPEN = 0; //TODO: Find value
-    public static final double HOPPER_CLOSED = 1; //TODO: Find value
-    public static final double BUTTON_LEFT = 0.5; //TODO: Find value
-    public static final double BUTTON_RIGHT = 0.5; //TODO: Find value
-    public static final double BUTTON_CENTER = 0.5; //TODO: Find value
-    public static final double RAMP_CLOSED = 0;
-    public static final double RAMP_OPEN = 1.0;
+    public static final double HOPPER_OPEN = 0;
+    public static final double HOPPER_CLOSED = 1;
+    public static final double BUTTON_LEFT = 0.5;
+    public static final double BUTTON_RIGHT = 0.5;
+    public static final double BUTTON_CENTER = 0.5;
+   // public static final double RAMP_CLOSED = 0;
+   // public static final double RAMP_OPEN = 1.0;
     public enum ButtonPusherState { LEFT , RIGHT , CENTER }
 
     /* local OpMode members. */
@@ -72,10 +73,13 @@ public class Hardware267Bot
         //lineviewer = hwMap.opticalDistanceSensor.get("lightveiwer");
         leftMotor   = hwMap.dcMotor.get("leftMotor");
         rightMotor  = hwMap.dcMotor.get("rightMotor");
-        belts = hwMap.dcMotor.get("belts");
+        liftMotor  = hwMap.dcMotor.get("liftMotor");
+
+
+       // belts = hwMap.dcMotor.get("belts");
         //rightBelt  = hwMap.dcMotor.get("rightBelt");
-        spinnerMotor  = hwMap.dcMotor.get("spinnerMotor");
-        beltOpener = hwMap.servo.get("beltOpener");
+       // spinnerMotor  = hwMap.dcMotor.get("spinnerMotor");
+       // beltOpener = hwMap.servo.get("beltOpener");
         //color = hwMap.colorSensor.get("color");
         //color.enableLed(false);
         //armMotor = hwMap.dcMotor.get("arm");
@@ -89,17 +93,18 @@ public class Hardware267Bot
         //armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        belts.setDirection(DcMotor.Direction.REVERSE);
-        spinnerMotor.setDirection(DcMotor.Direction.REVERSE);
+       // belts.setDirection(DcMotor.Direction.REVERSE);
+       // spinnerMotor.setDirection(DcMotor.Direction.REVERSE);
         //rightBelt.setDirection(DcMotor.Direction.FORWARD);
         //belt = hwMap.dcMotor.get("belt");
 
         // Set all motors to zero power
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-        belts.setPower(0);
+        liftMotor.setPower(0);
+       // belts.setPower(0);
        // rightBelt.setPower(0);
-        spinnerMotor.setPower(0);
+       // spinnerMotor.setPower(0);
 
         //leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
