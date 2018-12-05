@@ -52,16 +52,15 @@ public class team267botTeleop_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     Hardware267Bot robot           = new Hardware267Bot();   // Use a Pushbot's hardware
-    public static final double TRIGGER_MIN = 0; //TODO: Find value
-    public static final double TRIGGER_MAX = 1; //TODO: Find value                                                 // could also use HardwarePushbotMatrix class.
+    public static final double TRIGGER_MIN = 0;
+    public static final double TRIGGER_MAX = 1;
 
     @Override
     public void runOpMode() {
         double left;
         double right;
-        double beltPower;
-        double rampStatus = robot.RAMP_CLOSED;
-
+        double lift;
+        double speedFactor = 1;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -79,56 +78,42 @@ public class team267botTeleop_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            if (gamepad1.x){
+                speedFactor = (speedFactor == 1? 0.6 : 1);
+            }
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
+            left = -(gamepad1.left_stick_y * speedFactor);
+            right = -(gamepad1.right_stick_y * speedFactor);
+
+            if (gamepad1.y) {
+                lift = 0.7;
+            }
+            else if (gamepad1.a) {
+                lift = -0.7;
+            }
+            else {
+                lift = 0;
+            }
+
 
             // Output the safe vales to the motor drives.
             robot.leftMotor.setPower(left);
             robot.rightMotor.setPower(right);
-
-            if (gamepad1.left_trigger >0) {
-                //If the left trigger is pressed, move block forward.
-
-                //normalize to between 0 and 1
-                beltPower=  gamepad1.left_trigger;
-
-            }
-            else if (gamepad1.right_trigger >0) {
-                //If the right trigger is pressed, move block backwards.
-                beltPower= -gamepad1.right_trigger;
-            }
-            else {
-                //If neither triggers are pressed, do nothing.
-                beltPower= 0;
-            }
-
-
-
-
-
-            if (gamepad1.x) {
-                rampStatus = robot.RAMP_OPEN;
-            }
-            else if (gamepad1.b) {
-                rampStatus = robot.RAMP_CLOSED;
-            }
-
-            robot.beltOpener.setPosition(rampStatus);
-            robot.belts.setPower(beltPower);
-            robot.spinnerMotor.setPower(beltPower);
-            //robot.rightBelt.setPower(rightBeltPower);
-
-
+            robot.liftMotor.setPower(lift);
             // Send telemetry message to signify robot running;
 
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
-            telemetry.addData("belts", "%.2f", beltPower);
             telemetry.addData("leftTrigger", "%.2f", gamepad1.left_trigger);
             telemetry.addData("rightTrigger","%.2f", gamepad1.right_trigger);
-            telemetry.addData("beltOpener","%.2f", rampStatus);
+            telemetry.addData("left stick", "%.2f", gamepad1.left_stick_y);
+            telemetry.addData("right stick","%.2f", gamepad1.right_stick_y);
+            telemetry.addData("speedFactor","%.2f", speedFactor);
 
+
+            telemetry.addData("encoder-fwd-end", robot.liftMotor.getCurrentPosition() + "  busy=" + robot.liftMotor.isBusy());
+            telemetry.update();
+            idle();
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.
