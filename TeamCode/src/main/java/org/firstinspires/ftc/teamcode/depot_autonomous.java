@@ -74,15 +74,6 @@ public class depot_autonomous extends LinearOpMode {
             sleep(2000);
 
 
-        /*
-        robot.leftMotor.setPower(0.5);
-        robot.rightMotor.setPower(-0.5);
-        sleep(700);
-        robot.leftMotor.setPower(-0.5);
-        robot.rightMotor.setPower(-0.5);
-        sleep(3000);
-        robot.leftMotor.setPower(-0);
-        robot.rightMotor.setPower(-0);
-        */
+
     }
 }

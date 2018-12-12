@@ -29,6 +29,7 @@ public class Hardware267Bot
     public DcMotor  leftMotor     = null;
     public DcMotor  rightMotor    = null;
     public DcMotor  liftMotor  = null;
+    public Servo tokenServo =null;
    // public DcMotor  belts         = null;
     //public DcMotor  spinnerMotor  = null;
    // public Servo    beltOpener    = null;
@@ -46,14 +47,16 @@ public class Hardware267Bot
     public ButtonPusherState buttonPusherState;
     */
     // Constants:
-    public static final double HOPPER_OPEN = 0;
-    public static final double HOPPER_CLOSED = 1;
-    public static final double BUTTON_LEFT = 0.5;
-    public static final double BUTTON_RIGHT = 0.5;
-    public static final double BUTTON_CENTER = 0.5;
+    public static final double START_SERVO = 0.1;
+    public static final double END_SERVO = 0.5;
+    //public static final double HOPPER_OPEN = 0;
+    //public static final double HOPPER_CLOSED = 1;
+    //public static final double BUTTON_LEFT = 0.5;
+    //public static final double BUTTON_RIGHT = 0.5;
+    //public static final double BUTTON_CENTER = 0.5;
    // public static final double RAMP_CLOSED = 0;
    // public static final double RAMP_OPEN = 1.0;
-    public enum ButtonPusherState { LEFT , RIGHT , CENTER }
+    //public enum ButtonPusherState { LEFT , RIGHT , CENTER }
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -74,6 +77,7 @@ public class Hardware267Bot
         leftMotor   = hwMap.dcMotor.get("leftMotor");
         rightMotor  = hwMap.dcMotor.get("rightMotor");
         liftMotor  = hwMap.dcMotor.get("liftMotor");
+        tokenServo = hwMap.servo.get("tokenServo")
 
 
        // belts = hwMap.dcMotor.get("belts");
@@ -102,16 +106,8 @@ public class Hardware267Bot
         leftMotor.setPower(0);
         rightMotor.setPower(0);
         liftMotor.setPower(0);
-       // belts.setPower(0);
-       // rightBelt.setPower(0);
-       // spinnerMotor.setPower(0);
+        tokenServo.setPosition(START_SERVO);
 
-        //leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //servosEnabled = true;
-        //gateOpen = false;
-        //buttonPusherState = ButtonPusherState.CENTER;
     }
 
     /***

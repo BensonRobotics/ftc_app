@@ -40,11 +40,8 @@ import java.util.Date;
  * Created by FTC_Team_0267 on 10/30/2018.
  * By: Jillian Hogan
  */
-
-//Setup
-
-@Autonomous(name = "Pick this one guys, or don't, whatever",group = "Pushbot")
-public class depot_autonomous_2_electric_boogaloo extends LinearOpMode {
+@Autonomous(name = "lazy forwards",group = "Pushbot")
+public class crater_autonomous extends LinearOpMode {
     private String startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());;
     private ElapsedTime runtime = new ElapsedTime();
     Hardware267Bot robot = new Hardware267Bot();
@@ -63,8 +60,6 @@ public class depot_autonomous_2_electric_boogaloo extends LinearOpMode {
         robot.armMotor.setPower(0);
         robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         */
-            //Lowering from the lander
-
             waitForStart();
             robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -74,10 +69,8 @@ public class depot_autonomous_2_electric_boogaloo extends LinearOpMode {
 
             robot.liftMotor.setPower(0.6);
 
-            //Going away from lander
-
             sleep(10000);
-
+            //going away from lander
             robot.leftMotor.setPower(-0.5);
             robot.rightMotor.setPower(-0.5);
 
@@ -85,14 +78,27 @@ public class depot_autonomous_2_electric_boogaloo extends LinearOpMode {
 
 
         /*
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.leftMotor.setPower(0.5);
         robot.rightMotor.setPower(-0.5);
         sleep(700);
-        robot.leftMotor.setPower(-0.5);
-        robot.rightMotor.setPower(-0.5);
+
+        robot.leftMotor.setPower(0.5);
+        robot.rightMotor.setPower(0.5);
         sleep(3000);
-        robot.leftMotor.setPower(-0);
-        robot.rightMotor.setPower(-0);
+
+        robot.leftMotor.setPower(0);
+        robot.rightMotor.setPower(0);
+        robot.tokenServo.setPosition(Hardware267Bot.END_SERVO);
+
+        robot.leftMotor.setPower(-0.5);
+        robot.rightMotor.setPower(0.5);
+        sleep(700);
+
+        robot.leftMotor.setPower(0.5);
+        robot.rightMotor.setPower(0.5);
+        sleep(3000);
         */
     }
 }

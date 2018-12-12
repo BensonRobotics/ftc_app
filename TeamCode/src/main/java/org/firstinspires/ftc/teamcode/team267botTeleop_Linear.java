@@ -55,6 +55,7 @@ public class team267botTeleop_Linear extends LinearOpMode {
     public static final double TRIGGER_MIN = 0;
     public static final double TRIGGER_MAX = 1;
 
+
     @Override
     public void runOpMode() {
         double left;
@@ -83,6 +84,7 @@ public class team267botTeleop_Linear extends LinearOpMode {
             }
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
             left = -(gamepad1.left_stick_y * speedFactor);
+            //Jacob, more like Gaycob
             right = -(gamepad1.right_stick_y * speedFactor);
 
             if (gamepad1.y) {
