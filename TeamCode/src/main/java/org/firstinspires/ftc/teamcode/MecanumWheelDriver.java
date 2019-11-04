@@ -29,40 +29,42 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class MecanumWheelDriver extends LinearOpMode {
+/**     put the following code inside runOpMode()
+
+            MecanumWheelDriver drive = new MecanumWheelDriver();
+            drive.init(hardwareMap);
+
+        if you are going to run using encoders then include this as well
+
+            drive.initEncoder();
+ */
+
+public class MecanumWheelDriver {
+
+    final double COUNTS_PER_REVOLUTION = 288;    // eg: TETRIX Motor Encoder
+    final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    final double ROBOT_DIAMETER_INCHES = 23;
+    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION / (WHEEL_DIAMETER_INCHES * 3.14159);
+    final double COUNTS_PER_DEGREE = ((ROBOT_DIAMETER_INCHES * 3.14159) / 360) * COUNTS_PER_INCH;
 
     public DcMotor leftfront = null;
     public DcMotor rightfront = null;
     public DcMotor leftback = null;
     public DcMotor rightback = null;
 
-    public void runOpMode() {
-
-    }
-
-    public void move(double Radius, double inAngle, double Rotate) {
+    public void move(double Angle_Degrees, double Radius, double Rotate) {
 
         double leftfrontPower;
         double rightfrontPower;
         double leftbackPower;
         double rightbackPower;
 
-        /*leftfront  = hardwareMap.get(DcMotor.class, "LF_drive");
-        rightfront = hardwareMap.get(DcMotor.class, "RF_drive");
-        leftback  = hardwareMap.get(DcMotor.class, "LB_drive");
-        rightback = hardwareMap.get(DcMotor.class, "RB_drive");*/
-
-        leftfront.setDirection(DcMotor.Direction.FORWARD);
-        rightfront.setDirection(DcMotor.Direction.FORWARD);
-        leftfront.setDirection(DcMotor.Direction.FORWARD);
-        rightfront.setDirection(DcMotor.Direction.FORWARD);
-
-        //while (opModeIsActive()) {
-            double stickTotal = Radius + Math.abs(Rotate);
-            double Angle = Math.toRadians(inAngle) - Math.PI / 4;
+            double rTotal = Radius + Math.abs(Rotate);
+            double Angle = Math.toRadians(Angle_Degrees + 90) - Math.PI / 4;
             double cosAngle = Math.cos(Angle);
             double sinAngle = Math.sin(Angle);
             double LF_RB;  //leftfront and rightback motors
@@ -70,7 +72,7 @@ public class MecanumWheelDriver extends LinearOpMode {
             double multiplier;
 
             if (Math.abs(cosAngle) > Math.abs(sinAngle)) {   //scale the motor's speed so that at least one of them = 1
-                multiplier = 1/Math.abs(cosAngle);//then add the rotate speed
+                multiplier = 1/Math.abs(cosAngle);
                 LF_RB = multiplier * cosAngle;
                 RF_LB = multiplier * sinAngle;
             } else {
@@ -84,22 +86,141 @@ public class MecanumWheelDriver extends LinearOpMode {
             leftbackPower     = RF_LB * Radius + Rotate;
             rightbackPower    = LF_RB * Radius - Rotate;
 
-            /*leftfrontPower    = Range.clip(leftfrontPower * multiplier, -1.0, 1.0);
-            rightfrontPower   = Range.clip(rightfrontPower * multiplier, -1.0, 1.0);
-            leftbackPower     = Range.clip(leftbackPower * multiplier, -1.0, 1.0);
-            rightbackPower    = Range.clip(rightbackPower * multiplier, -1.0, 1.0);*/
-
-            if (Math.abs(stickTotal) > 1) {
-                leftfrontPower    = leftfrontPower/stickTotal;
-                rightfrontPower   = rightfrontPower/stickTotal;
-                leftbackPower     = leftbackPower/stickTotal;
-                rightbackPower    = rightbackPower/stickTotal;
+            if (Math.abs(rTotal) > 1) {
+                leftfrontPower    = leftfrontPower/rTotal;
+                rightfrontPower   = rightfrontPower/rTotal;
+                leftbackPower     = leftbackPower/rTotal;
+                rightbackPower    = rightbackPower/rTotal;
             }
 
             leftfront.setPower(leftfrontPower);
             rightfront.setPower(rightfrontPower);
             leftback.setPower(leftbackPower);
             rightback.setPower(rightbackPower);
-        //}
+    }
+
+    public void stop() {
+        leftfront.setPower(0);
+        rightfront.setPower(0);
+        leftback.setPower(0);
+        rightback.setPower(0);
+    }
+
+    public void moveInches(int Angle_Degrees, int inches, double speed) {
+
+        double Angle = Math.toRadians(Angle_Degrees + 90) - Math.PI / 4;
+        double cosAngle = Math.cos(Angle);
+        double sinAngle = Math.sin(Angle);
+        double LF_RB;  //leftfront and rightback motors
+        double RF_LB;  //rightfront and leftback motors
+        double multiplier;
+
+        if (Math.abs(cosAngle) > Math.abs(sinAngle)) {   //scale the motor's speed so that at least one of them = 1
+            multiplier = 1 / Math.abs(cosAngle);//then add the rotate speed
+            LF_RB = multiplier * cosAngle;
+            RF_LB = multiplier * sinAngle;
+        } else {
+            multiplier = 1 / Math.abs(sinAngle);
+            LF_RB = multiplier * cosAngle;
+            RF_LB = multiplier * sinAngle;
+        }
+
+        int LF_RBtarget = (int)(LF_RB * inches * COUNTS_PER_INCH);
+        int RF_LBtarget = (int)(RF_LB * inches * COUNTS_PER_INCH);
+
+        leftfront.setTargetPosition(leftfront.getCurrentPosition() + LF_RBtarget);
+        rightfront.setTargetPosition(rightfront.getCurrentPosition() + RF_LBtarget);
+        leftback.setTargetPosition(leftback.getCurrentPosition() + RF_LBtarget);
+        rightback.setTargetPosition(rightback.getCurrentPosition() + LF_RBtarget);
+
+        leftfront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightfront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftfront.setPower(LF_RB * speed);
+        rightfront.setPower(RF_LB * speed);
+        leftback.setPower(RF_LB * speed);
+        rightback.setPower(LF_RB * speed);
+
+        while (leftfront.isBusy() && rightfront.isBusy() && leftback.isBusy() && rightback.isBusy()) {
+        }
+
+        leftfront.setPower(0);
+        rightfront.setPower(0);
+        leftback.setPower(0);
+        rightback.setPower(0);
+
+        leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void rotate(int Degrees, double speed) {
+
+        int Lefttarget = -((int)(Degrees * COUNTS_PER_DEGREE));
+        int Righttarget = (int)(Degrees * COUNTS_PER_DEGREE);
+
+        leftfront.setTargetPosition(leftfront.getCurrentPosition() + Lefttarget);
+        rightfront.setTargetPosition(rightfront.getCurrentPosition() + Righttarget);
+        leftback.setTargetPosition(leftback.getCurrentPosition() + Lefttarget);
+        rightback.setTargetPosition(rightback.getCurrentPosition() + Righttarget);
+
+        leftfront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightfront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftfront.setPower(speed);
+        rightfront.setPower(-speed);
+        leftback.setPower(speed);
+        rightback.setPower(-speed);
+
+        while (leftfront.isBusy() && rightfront.isBusy() && leftback.isBusy() && rightback.isBusy()) {
+            //idle();
+        }
+
+        leftfront.setPower(0);
+        rightfront.setPower(0);
+        leftback.setPower(0);
+        rightback.setPower(0);
+
+        leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void init(HardwareMap HW) {
+        leftfront  = HW.get(DcMotor.class, "LF_drive");
+        rightfront = HW.get(DcMotor.class, "RF_drive");
+        leftback  = HW.get(DcMotor.class, "LB_drive");
+        rightback = HW.get(DcMotor.class, "RB_drive");
+
+        leftfront.setDirection(DcMotor.Direction.FORWARD);
+        rightfront.setDirection(DcMotor.Direction.REVERSE);
+        leftback.setDirection(DcMotor.Direction.FORWARD);
+        rightback.setDirection(DcMotor.Direction.REVERSE);
+
+        leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void RunWithEncoders(boolean On) {
+        if (On) {
+            leftfront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightfront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 }
