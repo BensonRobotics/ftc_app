@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -94,18 +93,29 @@ public class auto1A2A3A4B extends LinearOpMode {
     private float phoneZRotate    = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
-    int mode = 1;
 
-    int objleft;
-    int objright;
-    int objcenter;
-    int offset = 500;
-
-    double speed_slow = .35;
-    double speed_norm = .75;
+    //final float servoGear = 15/125;//                                                  <<--------------------------
+    //final long degPerSec = (long)((60/.14) * servoGear);
 
     @Override
     public void runOpMode() {
+
+        int mode = 1;
+
+        int objleft;
+        int objright;
+        int objcenter;
+        int offset;
+
+        final long degPerSec = 30;
+
+        final double speed_slow = .2;
+        final double speed_norm = .35;
+        final double speed_fast = .75;
+        final int field_side = 1;// -1 = red, 1 = blue
+
+        int inches_to_move;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -247,9 +257,9 @@ public class auto1A2A3A4B extends LinearOpMode {
         while(H.limit.getState()) {
             H.vertical.setPosition(0);
         }
-        H.vertical.setPosition(.5);
         H.vertical.setPosition(1);
-        sleep(1000);//                           <-----------------
+        sleep(110000 / degPerSec);//                           <-----------------
+        H.vertical.setPosition(.5);
 
         while (opModeIsActive() && mode < 9) {
 
@@ -266,7 +276,7 @@ public class auto1A2A3A4B extends LinearOpMode {
                     telemetry.addData("mode = ", mode);
                     telemetry.update();
                     while (H.sensorRange.getDistance(DistanceUnit.MM) > 355) {
-                    drive.move(0, speed_slow, 0);
+                    drive.move(0, speed_norm, 0);
                     }
                     drive.stop();
                     mode = 2;
@@ -274,12 +284,8 @@ public class auto1A2A3A4B extends LinearOpMode {
                 case 2: // looking for skystone
                     telemetry.addData("mode = ", mode);
                     targetsSkyStone.activate();
-                    while (!isStopRequested() && mode == 2) {
-                        if (Math.abs(offset) < 80) {
-                            drive.move(0, 0, 0);
-                            mode = 3;
-                        }
-                        drive.move(90, speed_slow * Range.clip(offset, -1, 1), 0);
+                    offset = 500 * field_side;
+                    while (!isStopRequested() && mode == 2 && runtime.seconds() < 10) {
 
                         if (tfod != null) {
                             telemetry.addData("TFmode = ", mode);
@@ -293,10 +299,10 @@ public class auto1A2A3A4B extends LinearOpMode {
                                 int i = 0;
                                 for (Recognition recognition : updatedRecognitions) {
                                     if (recognition.getLabel() == "Skystone") {
-                                        objleft = (int) recognition.getTop();
-                                        objright = (int) recognition.getBottom();
+                                        objright = (int) recognition.getTop();
+                                        objleft = (int) recognition.getBottom();
                                         objcenter = (objleft + objright) / 2;
-                                        offset = -(objcenter - 640);
+                                        offset = objcenter - 640;
                                     }
                                     telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                                     telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
@@ -306,78 +312,49 @@ public class auto1A2A3A4B extends LinearOpMode {
                                 }
                             }
                         }
-                        // check all the trackable targets to see which one (if any) is visible.
-                        targetVisible = false;
-                        for (VuforiaTrackable trackable : allTrackables) {
-                            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                                telemetry.addData("Visible Target", trackable.getName());
-                                targetVisible = true;
-
-                                // getUpdatedRobotLocation() will return null if no new information is available since
-                                // the last time that call was made, or if the trackable is not currently visible.
-                                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                                if (robotLocationTransform != null) {
-                                    lastLocation = robotLocationTransform;
-                                }
-                                break;
-                            }
+                        if (Math.abs(offset) < 80) {
+                            drive.stop();
+                            mode = 3;
                         }
-
-                        // Provide feedback as to where the robot is located (if we know).
-                        if (targetVisible) {
-                            // express position (translation) of robot in inches.
-                            VectorF translation = lastLocation.getTranslation();
-                            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-
-                            // express the rotation of the robot in degrees.
-                            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-                        }
-                        else {
-                            telemetry.addData("Visible Target", "none");
-                        }
+                        drive.move(90, speed_slow * -Range.clip(offset, -1, 1), 0);
                         telemetry.update();
                     }
+                    mode = 3;
                     break;
                 case 3: // pickup skystone
                     telemetry.addData("mode = ", mode);
                     telemetry.update();
-                    while (H.sensorRange.getDistance(DistanceUnit.MM) > 30) {//   <----------------
-                        drive.move(0, speed_slow, 0);
+                    H.grabber.setPosition(1);
+                    while (H.sensorRange.getDistance(DistanceUnit.MM) > 135) {//   <----------------
+                        drive.move(0, speed_norm, 0);
                     }
                     drive.stop();
                     //lower servo a little
-                    H.vertical.setPosition(1);
-                    sleep(500);//                                     <--------------
-                    H.vertical.setPosition(.5);
-                    while (H.sensorRange.getDistance(DistanceUnit.MM) > 50) {//   <--------------
-                        drive.move(0, speed_slow, 0);
-                    }
+                    drive.RunWithEncoders(true);
+                    /*H.vertical.setPosition(1);
+                    sleep(10000 / degPerSec);//                                     <--------------
+                    H.vertical.setPosition(.5);*/
+                    drive.moveInches(0, 1, speed_norm);
                     drive.stop();
                     //lower the servo all the way
                     H.vertical.setPosition(1);
-                    sleep(500);//                                      <----------
+                    sleep(35000 / degPerSec);//                                      <----------
                     H.vertical.setPosition(.5);
-                    H.grabber.setPosition(1);
-                    drive.RunWithEncoders(true);
-                    drive.moveInches(0, -10, speed_norm);
-                    drive.rotate(-90, speed_norm);
+                    H.grabber.setPosition(0);
+                    sleep(500); //wait for servo to move
+                    H.vertical.setPosition(0);
+                    sleep(75000 / degPerSec);
+                    H.vertical.setPosition(.5);
+                    drive.moveInches(180, 10, speed_norm);
                     mode = 4;
                     break;
                 case 4:
-                    drive.rotate(90, speed_norm);
-                    int inch_to_move = 72 - (int) H.sensorRange.getDistance(DistanceUnit.INCH);
-                    drive.rotate(180, speed_norm);
-                    drive.moveInches(0, inch_to_move, speed_norm);
-                    H.grabber.setPosition(0);
-                    H.vertical.setPosition(1);
-                    sleep(500);//                                            <-----------------
-                    H.vertical.setPosition(.5);
-                    while (true) {
-                        idle();
-                    }
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    drive.rotate(90, speed_fast * field_side);
+                    inches_to_move = 84 - ((int) H.sensorRange.getDistance(DistanceUnit.INCH));
+                    //drive.rotate(180, speed_norm);
+                    drive.moveInches(180, inches_to_move, speed_fast);
+                    mode = 5;
+                    break;
                 /*case 4: // navigate to foundation (2A)
                     while (H.sensorRange.getDistance(DistanceUnit.MM) > 750) {//  <--------------
                         drive.move(0, speed_slow, 0);
@@ -417,16 +394,20 @@ public class auto1A2A3A4B extends LinearOpMode {
                         telemetry.update();
                     }
                     drive.stop();
-                    mode = 5;
+                    mode = 5;*/
                 case 5: // place skystone
-                    drive.move(0, 0, speed_slow);
-                    sleep(1000);//                         <----------
-                    drive.stop();
-                    //move servo down a little                         <----------------------------------------
-                    H.grabber.setPosition(0);
-                    //move servo into start position
-                    mode = 6;
-                case 6: // position and grab foundation
+                    drive.rotate(90, -speed_norm * field_side);
+                    H.vertical.setPosition(1);
+                    sleep(25000  / degPerSec);//                                            <-----------------
+                    H.vertical.setPosition(.5);
+                    H.grabber.setPosition(1);
+                    drive.moveInches(180, 4, speed_slow);
+                    H.vertical.setPosition(0);
+                    sleep(25000  / degPerSec);//                                            <-----------------
+                    H.vertical.setPosition(.5);
+                    mode = 8;
+                    break;
+                /*case 6: // position and grab foundation
                     drive.move(0, -speed_slow, 0);
                     sleep(500);                                     //-----------
                     drive.move(0, 0, speed_slow);
@@ -441,19 +422,24 @@ public class auto1A2A3A4B extends LinearOpMode {
                         drive.move(0, speed_norm, 0);
                     }
                     drive.stop();
-                    mode = 8;
+                    mode = 8;*/
                 case 8: // park (4B)
-                    drive.move(270, speed_slow, 0);
-                    sleep(1500);//                                 <--------
+                    drive.rotate(90, -speed_fast * field_side);
+                    inches_to_move = 64 - ((int) H.sensorRange.getDistance(DistanceUnit.INCH));
+                    drive.moveInches(180, inches_to_move, speed_norm);
                     drive.stop();
                     mode = 9;
-                    break;*/
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    break;
             }
 
         }
 
         targetsSkyStone.deactivate();
+        H.vertical.setPosition(.5);
+        drive.leftfront.setPower(0);
+        drive.rightfront.setPower(0);
+        drive.leftback.setPower(0);
+        drive.rightback.setPower(0);
 
     }
 
@@ -461,7 +447,7 @@ public class auto1A2A3A4B extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.7;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
